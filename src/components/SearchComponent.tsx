@@ -30,6 +30,7 @@ export default function SearchComponent() {
         } catch (error) {
             console.log(error);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [Gh.name]);
 
     return (
