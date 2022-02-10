@@ -1,5 +1,6 @@
 import {
     Button,
+    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
@@ -33,26 +34,42 @@ const Transition = React.forwardRef(function Transition(
 
 const CardRepo: React.FC<repoProps> = ({ name, description, language, html_url }) => {
     const [modal, setModal] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const Gh = useSelector((state: { Gh: GHState }) => state.Gh);
     const dispatch = useDispatch();
 
+    const handleReadmeSubmit = async () => {
+        setModal(true);
+        setIsLoading(true);
+        try {
+            await dispatch(fetchRepoReadme(Gh.login, name));
+        } catch (error) {
+            console.log(error);
+        }
+        setIsLoading(false);
+    };
+
     return (
         <div className="RepoCard">
-            <Grid container justifyContent={'center'}>
-                <Dialog
-                    open={modal}
-                    TransitionComponent={Transition}
-                    keepMounted
-                    aria-describedby="alert-dialog-slide-description">
-                    <DialogContent>
-                        <DialogContentText>
+            <Dialog
+                open={modal}
+                TransitionComponent={Transition}
+                keepMounted
+                aria-describedby="alert-dialog-slide-description">
+                <DialogContent>
+                    <DialogContentText>
+                        {isLoading ? (
+                            <CircularProgress thickness={3.9} />
+                        ) : (
                             <ReactMarkdown children={Gh.readme} />
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={() => setModal(!modal)}>Close</Button>
-                    </DialogActions>
-                </Dialog>
+                        )}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setModal(!modal)}>Close</Button>
+                </DialogActions>
+            </Dialog>
+            <Grid container justifyContent={'center'} style={{ minHeight: '15rem' }}>
                 <Grid item>
                     <h1>{name}</h1>
                 </Grid>
@@ -62,7 +79,7 @@ const CardRepo: React.FC<repoProps> = ({ name, description, language, html_url }
                 <Grid item>
                     <h3>{language}</h3>
                 </Grid>
-                <Grid item container spacing={2}>
+                <Grid item container spacing={2} style={{ marginTop: 'auto' }}>
                     <Grid item xs={6}>
                         <Button fullWidth variant="contained" href={html_url} target="_blank">
                             View
@@ -73,10 +90,7 @@ const CardRepo: React.FC<repoProps> = ({ name, description, language, html_url }
                             fullWidth
                             variant="contained"
                             color="secondary"
-                            onClick={() => {
-                                setModal(true);
-                                dispatch(fetchRepoReadme(Gh.login, name));
-                            }}>
+                            onClick={handleReadmeSubmit}>
                             README
                         </Button>
                     </Grid>
