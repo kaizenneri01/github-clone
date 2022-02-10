@@ -1,0 +1,14 @@
+.RepoCard {
+    position: relative !important;
+    margin-top: 3rem;
+    background-color: #273c75f1;
+    color: #fff;
+    border: 1px solid;
+    font-family: 'Roboto', sans-serif;
+    padding: 1rem !important;
+    border-radius: 1rem;
+    object-fit: contain !important;
+    max-width: 50rem !important;
+    min-height: 13rem;
+    text-shadow: 2px 1px 2px black;
+}
